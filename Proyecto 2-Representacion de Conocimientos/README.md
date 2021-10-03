@@ -1,4 +1,7 @@
-Resolucion del proyecto 2 que consiste en la implementación de un motor de inferencia basado en resolución.
+**Proyecto 2**
+----------------------------------------------------------
+*Resolucion del proyecto 2 que consiste en la implementación de un motor de inferencia basado en resolución.*
+-----------------------------------------------------------
 
 1- Motor de Inferencia basado en Resolución
 Se implementa, usando un lenguaje procedural (C++ o Python), un programa que implemente el algoritmo de resolución por refutación visto en clase.
