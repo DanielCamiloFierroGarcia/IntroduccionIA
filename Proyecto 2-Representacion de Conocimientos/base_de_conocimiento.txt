@@ -1,0 +1,7 @@
++Hombre,Marco
++Pompeyano,Marco
+-Pompeyano,x3;+Romano,x3
++Gobernante,Cesar
+-Romano,x5;+Leal,x5,Cesar;+Odia,x5,Cesar
+-Hombre,x6;-Gobernante,y6;-IntentaAsesinar,x6,y6;-Leal,x6,y6
++IntentaAsesinar,Marco,Cesar
