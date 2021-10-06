@@ -246,4 +246,4 @@ void llenar_base(list<clausula> &base)
     }
     //imprimir_base(base);
 
-}
+}//ya la primera
