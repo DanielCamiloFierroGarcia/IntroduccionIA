@@ -4,129 +4,134 @@
 #include <fstream>
 using namespace std;
 
+
+/*PROYECTO 2: INFERENCIA POR RESOLUCION
+
+
+*Juan Esteban Rincon Bautista 
+*Daniel Camilo Fierro Garcia
+*Marco Antonio Valencia Dueñas 
+
+Ejemplo de prueba 
+
+Hombre(Marco)
+Pompeyano(Marco)
+-Pompeyano(x3) Romano(x3)
+Gobernante(Cesar)
+-Romano(x5) Leal(x5,Cesar) Odia(x5,Cesar)
+-Hombre(x6,) -Gobernante(y6) -IntentaAsesinar(x6,y6) -Leal(x6,y6)
+IntentaAsesinar(Marco,Cesar)
+
+HIPOTESIS:Odia(Marco,Cesar)
+
+
+*/
+/*Estructura que representa una premisa se compone de un
+estado de negación que indica si la premisa esta negada o no, un nombre 
+que contiene el nombre de la premisa y una lista de parámetros sobre los
+cuales recae la premisa*/
 struct premisa
 {
     bool negado;
     char nombre[50];
     list<char *> parametros;
 };
+/*Estructura que representa una cláusula definida como un conjunto de premisas, adicionalmente
+contiene un estado de descartado que posteriormente se usa en el motor asobre las premisas que se deben
+eliminar en el proceso de inferencia*/
 struct clausula
 {
     bool descartado = false;
     list<premisa> premisas;
 };
-void imprimir_base(list<clausula> base);
-void llenar_base(list<clausula> &base);
-bool comparar_parametros(list<char *> p1, list<char *> p2);
-bool inferencia_x_resolucion(list<clausula> base, premisa p_negada);
-bool comparar_clausula(clausula c1, clausula c2, clausula &final);
+//definición de funciones
+void imprimir_base(list<clausula> base);//función que imprime la base de conocimiento
+void llenar_base(list<clausula> &base);//función que llena la base de conocimiento desde un archivo en el disco
+bool comparar_parametros(list<char *> p1, list<char *> p2);//función que compara los parámetros de las premisas
+bool Unificar(list<clausula> base, premisa p_negada);//función que unifica los parámetros de la hipótesis con los de las premisas de la base de conocimiento
+bool inferencia_x_resolucion(list<clausula> base);//función que recibe la base de conocimiento normalizada y unificada y posteriormente hace el proceso de inferencia por resolución
+bool comparar_clausula(clausula c1, clausula c2, clausula &final);//función que compara las premisas de dos clausulas y elimina si puede hacerlo 
+bool identicos(clausula c1, clausula c2);//función que determina si dos clausulas son exactamente iguales
 
 list<clausula> Base_de_conocimiento;
 int main()
 {
-    //llenar_base(Base_de_conocimiento);
-
-    //imprimir_base(Base_de_conocimiento);
-    clausula c1, c2, c3;
-    premisa p1, p2, p3;
-    p1.negado = false;
-    strcpy(p1.nombre, "Hombre");
-    char *parametro1 = new char(25);
-    strcpy(parametro1, "marco");
-    p1.parametros.push_back(parametro1);
-    c1.premisas.push_back(p1);
-
-    p3.negado = false;
-    strcpy(p3.nombre, "Pompeyano");
-    char *parametro3 = new char(25);
-    strcpy(parametro3, "X1");
-    p3.parametros.push_back(parametro3);
-    c2.premisas.push_back(p3);
-
-    /*p2.negado = false;
-    strcpy(p2.nombre,"Odia");
-    char * parametro4 = new char(25);
-    strcpy(parametro4,"X1");
-    p2.parametros.push_back(parametro4);
-    char * parametro5 = new char(25);
-    strcpy(parametro5,"Y1");
-    p2.parametros.push_back(parametro5);
-    c3.premisas.push_back(p2);
-    
-    Base_de_conocimiento.push_back(c3);
-    Base_de_conocimiento.push_back(c1);
-    Base_de_conocimiento.push_back(c2);
-    //llenar_base(Base_de_conocimiento);
-    imprimir_base(Base_de_conocimiento);
-    p1.negado = false;
     premisa negada;
-    negada.negado= true;
-    strcpy(negada.nombre,"Odia");
-    char * parametro6 = new char(25);
-    strcpy(parametro6,"Marco");
+    negada.negado = true;
+    strcpy(negada.nombre, "Odia");
+    char *parametro6 = new char(25);
+    strcpy(parametro6, "Marco");
     negada.parametros.push_back(parametro6);
-    char * parametro7 = new char(25);
-    strcpy(parametro7,"Cesar");
+    char *parametro7 = new char(25);
+    strcpy(parametro7, "Cesar");
     negada.parametros.push_back(parametro7);
-   bool funciono = inferencia_x_resolucion(Base_de_conocimiento,negada);
-    cout<<"Estado de comprobacion de la premisa: "<<funciono;*/
-    /*clausula final;
-    bool cnf = comparar_clausula(c1,c2,final);
-    cout<<cnf<<endl;
-    for(premisa p:final.premisas ){
-        cout<<p.nombre<<"(";
-        for(char* para: p.parametros){
-            cout<<para<<" ";
-        }
-        cout<<")";
-    }
-    cout<<endl;*/
+
     llenar_base(Base_de_conocimiento);
     imprimir_base(Base_de_conocimiento);
+    cout << endl;
+    Unificar(Base_de_conocimiento, negada);
+
     return 0;
+}
+bool identicos(clausula c1, clausula c2)
+{
+    list<premisa>::iterator it;
+    list<premisa>::iterator it2;
+    list<char *>::iterator para;
+    list<char *>::iterator para1;
+    bool iguales = true;
+
+    if (c1.premisas.size() == c2.premisas.size())
+    {
+        //cout<<"holi"<<endl;
+        for (it = c1.premisas.begin(), it2 = c2.premisas.begin(); it != c1.premisas.end(), it2 != c2.premisas.end(); it++, it2++)
+        {
+            //cout<<it<<endl;
+            cout<<it->nombre<<" "<<it2->nombre<<" "<<it->negado<<" "<<it2->negado<<endl;
+            if (strcmp(it->nombre, it2->nombre) == 0 && it->negado == it2->negado && it->parametros.size() == it2->parametros.size())
+            {
+                cout<<"holi"<<endl;
+                for(para = it->parametros.begin(), para1 = it2->parametros.begin(); para != it->parametros.end(),para1 != it2->parametros.end();para++,para1++){
+                    if(strcmp(*para,*para1) != 0){
+                        iguales = false;
+                    }
+                }
+            }else{
+                iguales =false;
+            }
+        }
+    }else{
+        iguales =false;
+    }
+    return iguales;
 }
 bool comparar_clausula(clausula c1, clausula c2, clausula &final)
 {
-    list<char *>::iterator itp1;
-    list<char *>::iterator itp2;
-    bool confirm = true, encontro = false;
-
-    char nombre[25];
-    // clausula final;
+    list<char *>::iterator para1;
+    list<char *>::iterator para2;
+    char nombre[50];
+    bool comparables = true, encontro = false;
     for (premisa p1 : c1.premisas)
     {
         for (premisa p2 : c2.premisas)
         {
-            if (strcmp(p1.nombre, p2.nombre) == 0 && p1.negado != p2.negado && p1.parametros.size() == p2.parametros.size())
+            if (strcmp(p1.nombre, p2.nombre) == 0 && p1.negado != p2.negado)
             {
+                //cout<<"holi"<<endl;
                 encontro = true;
                 strcpy(nombre, p1.nombre);
-                for (itp1 = p1.parametros.begin(), itp2 = p2.parametros.begin(); itp1 != p1.parametros.end(), itp2 != p2.parametros.end(); itp1++, itp2++)
+                for (para1 = p1.parametros.begin(), para2 = p2.parametros.begin(); para1 != p1.parametros.end(), para2 != p2.parametros.end(); para1++, para2++)
                 {
-                    char p[25];
-                    char p2[25];
-                    strcpy(p, *itp1);
-                    strcpy(p2, *itp2);
-                    if (p[0] == 'X' || p[0] == 'Y' && p2[0] != 'X' && p2[0] != 'Y')
+                    //cout<<*para1<<" "<<*para2<<endl;
+                    if (strcmp(*para1, *para2) != 0)
                     {
-                        strcpy(*itp1, *itp2);
-                    }
-                    else if (p2[0] == 'X' || p2[0] == 'Y' && p[0] != 'X' && p[0] != 'Y')
-                    {
-                        strcpy(*itp2, *itp1);
-                    }
-
-                    if (strcmp(*itp1, *itp2) != 0)
-                    {
-                        confirm = false;
-                        strcpy(nombre, "");
+                        comparables = false;
                     }
                 }
             }
         }
     }
-
-    if (confirm && encontro)
+    if (comparables == true && encontro == true)
     {
         for (premisa p1 : c1.premisas)
         {
@@ -142,13 +147,9 @@ bool comparar_clausula(clausula c1, clausula c2, clausula &final)
                 final.premisas.push_back(p2);
             }
         }
-
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 bool comparar_parametros(list<char *> p1, list<char *> p2)
 {
@@ -162,58 +163,112 @@ bool comparar_parametros(list<char *> p1, list<char *> p2)
         }
     }
 }
-bool inferencia_x_resolucion(list<clausula> base, premisa p_negada)
+bool Unificar(list<clausula> base, premisa p_negada)
 {
+    list<char *> val_variables;
+    for (char *var : p_negada.parametros)
+    {
+        val_variables.push_back(var);
+    }
+    clausula negada;
+    negada.premisas.push_back(p_negada);
+    base.push_back(negada);
 
+    list<clausula>::iterator itclausula;
+    list<premisa>::iterator itpremisa;
+    list<char *>::iterator it1;
+    list<char *>::iterator it2;
+
+    for (itclausula = base.begin(); itclausula != base.end(); itclausula++)
+    {
+        for (itpremisa = itclausula->premisas.begin(); itpremisa != itclausula->premisas.end(); itpremisa++)
+        {
+            for (it1 = itpremisa->parametros.begin(), it2 = val_variables.begin(); it1 != itpremisa->parametros.end() && it2 != val_variables.end(); it1++, it2++)
+            {
+                if (strchr(*it1, 'x') != NULL || strchr(*it1, 'y') != NULL && itpremisa->parametros.size() > 1)
+                {
+                    strcpy(*it1, *it2);
+                }
+                else if (strchr(*it1, 'y') != NULL && itpremisa->parametros.size() == 1)
+                {
+                    it2++;
+                    strcpy(*it1, *it2);
+                }
+            }
+        }
+    }
+    imprimir_base(base);
+    cout << endl;
+    bool resul = inferencia_x_resolucion(base);
+    cout << "resultado de la inferencia: " << resul << endl;
+}
+bool inferencia_x_resolucion(list<clausula> base)
+{
     list<clausula> copia;
+    imprimir_base(base);
+    cout << endl;
     list<clausula> copia2;
-    list<clausula> Nbase;
-    clausula caux;
-    int nid = 0;
-    bool usar;
-    caux.premisas.push_back(p_negada);
     for (clausula c : base)
     {
         copia.push_back(c);
-        copia2.push_back(c);
     }
-    copia.push_back(caux);
-    copia2.push_back(caux);
 
-    list<clausula>::iterator itc1;
-    list<clausula>::iterator itc2;
-
-    imprimir_base(Nbase);
-    for (itc1 = copia.begin(); itc1 != copia.end(); itc1++)
+    list<clausula>::iterator it1;
+    list<clausula>::iterator it2;
+    for (it1 = copia.begin(); it1 != copia.end(); it1++)
     {
-        for (itc2 = copia.begin(); itc2 != copia.end(); itc2++)
+        for (it2 = copia.begin(); it2 != copia.end(); it2++)
         {
-            if (itc1 != itc2 && itc1->descartado == false && itc2->descartado == false)
+            if (distance(it1, it2) != 0 && it2->descartado == false && it1->descartado == false)
             {
-                clausula final;
-                bool usar = comparar_clausula(*itc1, *itc2, final);
-                if (usar == true && final.premisas.size() != 0)
+                clausula recipiente;
+                bool usar = comparar_clausula(*it1, *it2, recipiente);
+                if (usar == true && recipiente.premisas.size() != 0)
                 {
-                    itc1->descartado = true;
-                    itc1->descartado = true;
-                    copia.push_back(final);
+                    it1->descartado = true;
+                    it2->descartado = true;
+                    copia2.push_back(recipiente);
                 }
-                else if (usar == true && final.premisas.size() == 0)
+                else if (usar == true && recipiente.premisas.size() == 0)
                 {
                     return true;
                 }
             }
         }
     }
+    int contd = 0;
+    for (clausula c1 : copia)
+    {
+        if (c1.descartado != true)
+        {
+            contd++;
+            copia2.push_back(c1);
+        }
+    }
+    /*if(copia2.size()==2){
+        clausula cc = copia2.front();
+        clausula cc1 = copia2.back();
+        bool iguales = identicos(cc,cc1);
+        if(identicos){
+            return false;
+        }
+    }*/
+    if (contd > 0)
+    {
+        return inferencia_x_resolucion(copia2);
+    }
     return false;
 }
-
 void imprimir_base(list<clausula> base)
 {
     for (clausula c : base)
     {
         for (premisa p : c.premisas)
         {
+            if (p.negado == true)
+            {
+                cout << "-";
+            }
             cout << p.nombre << "(";
             for (char *pr : p.parametros)
             {
@@ -246,10 +301,10 @@ void llenar_base(list<clausula> &base)
             strcpy(cad, ptr);
             if (strchr(cad, '-') != NULL)
             {
-                if(paux.parametros.size()!=0 && pos != 0){
+                if (paux.parametros.size() != 0 && pos != 0)
+                {
                     aux.premisas.push_back(paux);
                     //strcpy(paux.nombre, "");
-                    
                 }
                 paux.parametros.clear();
                 for (int i = 0; i < strlen(cad); i++)
@@ -262,10 +317,10 @@ void llenar_base(list<clausula> &base)
             }
             else if (strchr(cad, '+') != NULL)
             {
-                if(paux.parametros.size()!=0 && pos != 0){
+                if (paux.parametros.size() != 0 && pos != 0)
+                {
                     aux.premisas.push_back(paux);
                     //strcpy(paux.nombre, "");
-                    
                 }
                 paux.parametros.clear();
                 for (int i = 0; i < strlen(cad); i++)
@@ -291,10 +346,10 @@ void llenar_base(list<clausula> &base)
         pos = 0;
         //strcpy(cad,"");
         aux.premisas.clear();
-
     }
     //Base_de_conocimiento.push_back(aux);
     // cout << linea << endl;
 
     ar.close();
 }
+
