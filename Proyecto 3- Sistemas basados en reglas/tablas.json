@@ -1,0 +1,79 @@
+{
+    "R":[
+        {
+            "none":0.7,
+            "light":0.2,
+            "heavy":0.1
+        }
+       
+    ],
+    "M":[
+        {
+            "R":"none",
+            "yes":0.4,
+            "no":0.6
+        },
+        {
+            "R":"light",
+            "yes":0.2,
+            "no":0.8   
+        },
+        {
+            "R":"heavy",
+            "yes":0.1,
+            "no":0.9   
+        }
+    ],
+    "T":[
+        {
+            "R":"none",
+            "M":true,
+            "on time":0.8,
+            "delayed":0.2
+        },
+        {
+            "R":"none",
+            "M":false,
+            "on time":0.9,
+            "delayed":0.1
+        },
+        {
+            "R":"light",
+            "M":true,
+            "on time":0.6,
+            "delayed":0.4
+        },
+        {
+            "R":"light",
+            "M":false,
+            "on time":0.7,
+            "delayed":0.3
+        },
+        {
+            "R":"heavy",
+            "M":true,
+            "on time":0.4,
+            "delayed":0.6
+        },
+        {
+            "R":"heavy",
+            "M":false,
+            "on time":0.5,
+            "delayed":0.5
+        }
+        
+    ],
+    "A":[
+        {
+            "T":"on time",
+            "attend":0.9,
+            "miss":0.1
+        },
+        {
+            "T":"delayed",
+            "attend":0.6,
+            "miss":0.4
+        }
+    ]
+
+}
